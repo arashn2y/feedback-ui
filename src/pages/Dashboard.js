@@ -1,19 +1,34 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Button from "../components/Button";
+import Loading from "../components/Loading";
 import ConfirmTextInput from "../components/ConfirmTextInput";
 import { AiOutlineDelete } from "react-icons/ai";
 import { FiEdit2 } from "react-icons/fi";
 import { BsInfoLg } from "react-icons/bs";
 import { Link } from "react-router-dom";
-import { comments as data } from "../data/data";
+import axios from "axios";
 
 function Dashboard() {
   const [id, setId] = useState(0);
   const [vote, setVote] = useState(0);
   const [review, setReview] = useState("");
-  const [comments, setComments] = useState(data);
+  const [loading, setLoading] = useState(true);
+  const [comments, setComments] = useState([]);
   const [disabled, setDisabled] = useState(true);
   const [error, setError] = useState("");
+
+  useEffect(() => {
+    axios
+      .get("https://engim-restapi.vercel.app/api/reviews")
+      .then(res => {
+        setTimeout(() => {
+        setComments(res.data);
+        setLoading(false);
+        }, 4000);
+      })
+      .catch(err => console.log(err));
+  }, []);
+
 
   const handleButton = value => {
     setVote(value);
@@ -80,18 +95,18 @@ function Dashboard() {
               {comments.length > 0 ? comments.length : 0} Recension{comments.length > 1 ? "i" : "e"}
             </h2>
             <p className="font-medium font-Itim text-lg my-2 text-center">
-              Voto medio: {comments.length > 0 ? (comments.reduce((acc, curr) => acc + curr.vote, 0) / comments.length).toFixed(2) : 0}
+              Voto medio: {comments.length > 0 ? (comments.reduce((acc, curr) => acc + curr.rating, 0) / comments.length).toFixed(2) : 0}
             </p>
           </div>
-          {comments.map((comment, i) => (
+          {loading ? <Loading />: comments.map((comment, i) => (
             <div
               key={comment.id}
               className="w-11/12 md:w-4/5 lg:w-2/5 flex flex-col p-8 my-1 border-2 border-gray-100 rounded-sm relative tansition-all ease-in duration-700"
               style={{ boxShadow: "14px 5px 70px 6px rgba(0,0,0,0.1)" }}>
               <div className="absolute flex justify-center items-center -top-3 -right-3 rounded-50 w-8 h-8 bg-dark-green bg-opacity-60">
-                {comment.vote}
+                {comment.rating}
               </div>
-              <p className="text-xl font-medium">{comment.review}</p>
+              <p className="text-xl font-medium">{comment.description}</p>
               <button
                 className="absolute flex justify-center items-center bottom-0 right-2 w-8 h-8 text-red-500 bg-opacity-60 cursor-pointer"
                 onClick={() => setComments(prevState => prevState.filter(prevComment => prevComment.id !== comment.id))}>
