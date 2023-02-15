@@ -19,12 +19,10 @@ function Dashboard() {
 
   useEffect(() => {
     axios
-      .get("https://engim-restapi.vercel.app/api/reviews")
+      .get("https://engimapi.arashnouri.dev/api/reviews")
       .then(res => {
-        setTimeout(() => {
         setComments(res.data);
         setLoading(false);
-        }, 4000);
       })
       .catch(err => console.log(err));
   }, []);
