@@ -10,8 +10,8 @@ import axios from "axios";
 
 function Dashboard() {
   const [id, setId] = useState(0);
-  const [vote, setVote] = useState(0);
-  const [review, setReview] = useState("");
+  const [rating, setRating] = useState(0);
+  const [description, setDescription] = useState("");
   const [loading, setLoading] = useState(true);
   const [comments, setComments] = useState([]);
   const [disabled, setDisabled] = useState(true);
@@ -29,8 +29,8 @@ function Dashboard() {
 
 
   const handleButton = value => {
-    setVote(value);
-    if (value > 0 && review.trim() !== "" && review.trim().length >= 10) {
+    setRating(value);
+    if (value > 0 && description.trim() !== "" && description.trim().length >= 10) {
       setError("");
       setDisabled(false);
     }
@@ -59,11 +59,12 @@ function Dashboard() {
                 {[...Array(10)].map((e, i) => {
                   const baseStyle =
                     "border-2 border-transparent mx-1 rounded-50 text-sm md:text-base w-6 h-6 md:w-8 md:h-8 cursor-pointer transition-all ease-in duration-150";
+                    console.log(rating);
                   return (
                     <Button
                       key={i}
                       className={`${baseStyle} ${
-                        vote === 0 ? "bg-slate-300 hover:bg-dark-green" : vote === i + 1 ? ` bg-dark-green` : " bg-slate-100 hover:bg-dark-green"
+                        rating === 0 ? "bg-slate-300 hover:bg-dark-green" : rating === i + 1 ? ` bg-dark-green` : " bg-slate-100 hover:bg-dark-green"
                       }`}
                       onClick={handleButton}>
                       {i + 1}
@@ -73,12 +74,12 @@ function Dashboard() {
               </div>
               <ConfirmTextInput
                 setComments={setComments}
-                setReview={setReview}
-                review={review}
+                setDescription={setDescription}
+                description={description}
                 setDisabled={setDisabled}
                 disabled={disabled}
-                vote={vote}
-                setVote={setVote}
+                rating={rating}
+                setRating={setRating}
                 setError={setError}
                 error={error}
                 id={id}
@@ -96,7 +97,7 @@ function Dashboard() {
               Voto medio: {comments.length > 0 ? (comments.reduce((acc, curr) => acc + curr.rating, 0) / comments.length).toFixed(2) : 0}
             </p>
           </div>
-          {loading ? <Loading />: comments.map((comment, i) => (
+          {loading ? <Loading />: comments.map(comment => (
             <div
               key={comment.id}
               className="w-11/12 md:w-4/5 lg:w-2/5 flex flex-col p-8 my-1 border-2 border-gray-100 rounded-sm relative tansition-all ease-in duration-700"
@@ -113,8 +114,8 @@ function Dashboard() {
               <button
                 className="absolute flex justify-center items-center bottom-0 right-7 w-8 h-8 text-dark-green bg-opacity-60 cursor-pointer"
                 onClick={() => {
-                  setReview(comment.review);
-                  setVote(comment.vote);
+                  setDescription(comment.description);
+                  setRating(comment.rating);
                   setId(comment.id);
                 }}>
                 <FiEdit2 />

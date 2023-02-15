@@ -1,16 +1,16 @@
 import { v4 as uuid } from "uuid";
 
 const ConfirmTextInput = props => {
-  const { disabled, setDisabled, review, setReview, setComments, vote, setVote, error, setError, id } = props;
+  const { disabled, setDisabled, description, setDescription, setComments, rating, setRating, error, setError, id, setId } = props;
 
   const inputHandler = e => {
     const input = e.target.value;
     if (input !== "") {
-      setReview(input);
+      setDescription(input);
     }
     if (input.trim() === "") {
       setDisabled(true);
-    } else if (input.trim().length < 10 || vote <= 0) {
+    } else if (input.trim().length < 10 || rating <= 0) {
       setError("La recensione deve essere lunga almeno 10 caratteri e deve avere un voto");
       setDisabled(true);
     } else {
@@ -24,18 +24,19 @@ const ConfirmTextInput = props => {
       setComments(prev =>
         prev.map(comment => {
           if (comment.id === id) {
-            return { ...comment, review, vote };
+            return { ...comment, description, rating };
           } else {
             return comment;
           }
         })
       );
     } else {
-      setComments(prev => [...prev, { id: uuid(), review, vote }]);
+      setComments(prev => [...prev, { id: uuid(), description, rating }]);
     }
-    setVote(0);
-    setReview("");
+    setRating(0);
+    setDescription("");
     setDisabled(true);
+    setId("");
   };
 
   return (
@@ -44,7 +45,7 @@ const ConfirmTextInput = props => {
         <div className={`flex justify-center items-center p-1 mt-4 rounded-md border-2 ${error ? "border-red-500" : "border-gray-100"}`}>
           <input
             type="text"
-            value={review}
+            value={description}
             className="w-full focus:outline-none border-none text-xl p-3"
             placeholder="scrivere una recensione qui"
             onChange={inputHandler}
